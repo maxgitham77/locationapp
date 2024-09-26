@@ -2,6 +2,7 @@ package com.locationapp.locationapp.controller;
 
 import com.locationapp.locationapp.entity.Location;
 import com.locationapp.locationapp.service.LocationService;
+import com.locationapp.locationapp.utilities.EmailUtil;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -17,6 +18,7 @@ import java.util.List;
 public class LocationController {
 
     private LocationService locationService;
+    private EmailUtil emailUtil;
 
     @GetMapping("/showCreate")
     public String showCreate()
@@ -30,6 +32,7 @@ public class LocationController {
         Location savedLocation = locationService.createLocation(location);
         String msg = "Location saved with the id: " + savedLocation.getId();
         modelMap.addAttribute("msg", msg);
+        //emailUtil.sendMail("mig1@student.london.ac.uk", "Location", "The Location was saved successfully!");
         return "createLocation";
     }
 
