@@ -1,15 +1,15 @@
 package com.locationapp.locationapp.controller;
 
 import com.locationapp.locationapp.entity.Location;
+import com.locationapp.locationapp.repository.LocationRepository;
 import com.locationapp.locationapp.service.LocationService;
 import com.locationapp.locationapp.utilities.EmailUtil;
+import com.locationapp.locationapp.utilities.ReportUtil;
+import jakarta.servlet.ServletContext;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -18,7 +18,11 @@ import java.util.List;
 public class LocationController {
 
     private LocationService locationService;
+    private LocationRepository locationRepository;
     private EmailUtil emailUtil;
+    private ReportUtil reportUtil;
+
+    private ServletContext servletContext;
 
     @GetMapping("/showCreate")
     public String showCreate()
@@ -32,7 +36,7 @@ public class LocationController {
         Location savedLocation = locationService.createLocation(location);
         String msg = "Location saved with the id: " + savedLocation.getId();
         modelMap.addAttribute("msg", msg);
-        //emailUtil.sendMail("mig1@student.london.ac.uk", "Location", "The Location was saved successfully!");
+        emailUtil.sendMail("mig1@student.london.ac.uk", "Location", "The Location was saved successfully!");
         return "createLocation";
     }
 
@@ -70,6 +74,15 @@ public class LocationController {
         List<Location> locations = locationService.getAllLocations();
         modelMap.addAttribute("locations", locations);
         return "displayLocations";
+    }
+
+    @RequestMapping("/generateReport")
+    public String generateReport()
+    {
+        String path = servletContext.getRealPath("/");
+        List<Object[]> data = locationRepository.findTypeAndTypeCount();
+        reportUtil.generatePieChart(path, data);
+        return "report";
     }
 
 }
