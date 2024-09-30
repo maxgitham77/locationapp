@@ -9,6 +9,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/locations")
+@CrossOrigin("*")
 public class LocationRestController {
 
     @Autowired
